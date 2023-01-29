@@ -273,14 +273,14 @@ done
 
 
 echo  -e "${red}Hãy chọn: (vui lòng nhập một số)? Ctrl + C thoát tập lệnh này${black}"
-select todo in Thêm quy tắc chuyển tiếp Xóa quy tắc chuyển tiếp Danh sách các quy tắc chuyển tiếp Xem cấu hình iptables hiện tại
+select todo in AddChuyentiep XoaChuyentiep DanhsachChuyenTiep XemcauhinhIptables
 do
     case $todo in
-    Thêm quy tắc chuyển tiếp)
+    AddChuyentiep)
         addDnat
         #break
         ;;
-    Xóa quy tắc chuyển tiếp)
+    XoaChuyentiep)
         rmDnat
         #break
         ;;
@@ -292,10 +292,10 @@ do
     #     rmSnat
     #     #break
     #     ;;
-    Danh sách các quy tắc chuyển tiếp)
+    DanhsachChuyenTiep)
         lsDnat
         ;;
-    Xem cấu hình iptables hiện tại)
+    XemcauhinhIptables)
         echo "###########################################################"
         iptables -L PREROUTING -n -t nat --line-number
         iptables -L POSTROUTING -n -t nat --line-number
