@@ -10,10 +10,10 @@ touch $conf
 
     clear
     echo "#############################################################"
-    echo "# Usage: setup iptables nat rules for domian/ip             #"
-    echo "# Website:  http://www.arloor.com/                          #"
-    echo "# Author: ARLOOR <admin@arloor.com>                         #"
-    echo "# Github: https://github.com/arloor/iptablesUtils           #"
+    echo "# Sử dụng: thiết lập quy tắc iptables nat cho domian/ip     #"
+    echo "# Website:  http://fastpn.net                               #"
+    echo "# Author: HarryNG <quynh.nl@hinet.dev>                      #"
+    echo "# Github: https://github.com/harryngne/IptablesUtils        #"
     echo "#############################################################"
     echo
 
@@ -21,7 +21,7 @@ touch $conf
 setupService(){
     cat > /usr/local/bin/dnat.sh <<"AAAA"
 #! /bin/bash
-[[ "$EUID" -ne '0' ]] && echo "Error:This script must be run as root!" && exit 1;
+[[ "$EUID" -ne '0' ]] && echo "Lỗi: Tập lệnh này phải được chạy bằng quyền root!" && exit 1;
 
 
 
@@ -34,22 +34,22 @@ lastConfigTmp="/iptables_nat.sh_tmp"
 
 
 ####
-echo "正在安装依赖...."
+echo "Cài đặt phụ thuộc ...."
 yum install -y bind-utils &> /dev/null
 apt install -y dnsutils &> /dev/null
-echo "Completed：依赖安装完毕"
+echo "Đã hoàn thành: Các phụ thuộc được cài đặt"
 echo ""
 ####
 turnOnNat(){
     # 开启端口转发
-    echo "1. 端口转发开启  【成功】"
+    echo "1. Đã bật chuyển tiếp cổng  [Thành công]"
     sed -n '/^net.ipv4.ip_forward=1/'p /etc/sysctl.conf | grep -q "net.ipv4.ip_forward=1"
     if [ $? -ne 0 ]; then
         echo -e "net.ipv4.ip_forward=1" >> /etc/sysctl.conf && sysctl -p
     fi
 
     #开放FORWARD链
-    echo "2. 开放iptbales中的FORWARD链  【成功】"
+    echo "2. 开放iptbales中的FORWARD链   [Thành công]"
     arr1=(`iptables -L FORWARD -n  --line-number |grep "REJECT"|grep "0.0.0.0/0"|sort -r|awk '{print $1,$2,$5}'|tr " " ":"|tr "\n" " "`)  #16:REJECT:0.0.0.0/0 15:REJECT:0.0.0.0/0
     for cell in ${arr1[@]}
     do
@@ -71,7 +71,7 @@ testVars(){
     # 判断端口是否为数字
     local valid=
     echo "$localport"|[ -n "`sed -n '/^[0-9][0-9]*$/p'`" ] && echo $remoteport |[ -n "`sed -n '/^[0-9][0-9]*$/p'`" ]||{
-       echo  -e "${red}本地端口和目标端口请输入数字！！${black}";
+       echo  -e "${red}Vui lòng nhập số cho cổng VPS và chuyển tuyến ${black}";
        return 1;
     }
 }
@@ -106,7 +106,7 @@ dnatIfNeed(){
           return 1;
      fi
   }||{
-      echo "Error: host命令缺失或传递的参数数量有误"
+      echo "Error: host Lệnh bị thiếu hoặc chuyển sai số đối số"
       return 1;
   }
     echo $remote >$base/${1}IP
@@ -114,7 +114,7 @@ dnatIfNeed(){
 }
 
 
-echo "3. 开始监听域名解析变化"
+echo "3. Bắt đầu theo dõi các thay đổi về độ phân giải tên miền"
 echo ""
 while true ;
 do
@@ -134,7 +134,7 @@ do
     arr2=(`echo $cell|tr ":" " "|tr ">" " "`)  #arr2=16 REJECT 0.0.0.0/0
     # 过滤非法的行
     [ "${arr2[2]}" != "" -a "${arr2[3]}" = "" ]&& testVars ${arr2[0]}  ${arr2[1]} ${arr2[2]}&&{
-        echo "转发规则： ${arr2[0]} => ${arr2[1]}:${arr2[2]}"
+        echo "Quy tắc chuyển tiếp: ${arr2[0]} => ${arr2[1]}:${arr2[2]}"
         dnatIfNeed ${arr2[0]} ${arr2[1]} ${arr2[2]}
     }
 done
@@ -142,16 +142,16 @@ done
 lastConfigTmpStr=`cat $lastConfigTmp`
 lastConfigStr=`cat $lastConfig`
 if [ "$firstAfterBoot" = "1" -o "$lastConfigTmpStr" != "$lastConfigStr" ];then
-    echo '更新iptables规则[DOING]'
+    echo 'Cập nhật quy tắc iptables[DOING]'
     source $lastConfigTmp
     cat $lastConfigTmp > $lastConfig
-    echo '更新iptables规则[DONE]，新规则如下：'
+    echo 'Cập nhật quy tắc iptables[DONE]，Các quy tắc mới như sau：'
     echo "###########################################################"
     iptables -L PREROUTING -n -t nat --line-number
     iptables -L POSTROUTING -n -t nat --line-number
     echo "###########################################################"
 else
- echo "iptables规则未变更"
+ echo "iptables quy tắc không thay đổi"
 fi
 
 firstAfterBoot=0
@@ -201,16 +201,16 @@ addDnat(){
     local remoteport=
     local remotehost=
     local valid=
-    echo -n "本地端口号:" ;read localport
-    echo -n "远程端口号:" ;read remoteport
+    echo -n "Cổng của máy VPS:" ;read localport
+    echo -n "Cổng của máy chuyển:" ;read remoteport
     # echo $localport $remoteport
     # 判断端口是否为数字
     echo "$localport"|[ -n "`sed -n '/^[0-9][0-9]*$/p'`" ] && echo $remoteport |[ -n "`sed -n '/^[0-9][0-9]*$/p'`" ]||{
-        echo  -e "${red}本地端口和目标端口请输入数字！！${black}"
+        echo  -e "${red}Vui lòng nhập số cho cổng VPS và cổng chuyển tuyến! ${black}"
         return 1;
     }
 
-    echo -n "目标域名/IP:" ;read remotehost
+    echo -n "Tên miền/IP muốn chuyển tới:" ;read remotehost
     # # 检查输入的不是IP
     # if [ "$remotehost" = "" -o "$(echo  $remotehost |grep -E -o '([0-9]{1,3}[\.]){3}[0-9]{1,3}')" != "" ];then
     #     isip=true
@@ -225,13 +225,13 @@ addDnat(){
 $localport>$remotehost:$remoteport
 LINE
     }
-    echo "成功添加转发规则 $localport>$remotehost:$remoteport"
+    echo "Đã thêm thành công quy tắc chuyển tiếp $localport>$remotehost:$remoteport"
     setupService
 }
 
 rmDnat(){
     local localport=
-    echo -n "本地端口号:" ;read localport
+    echo -n "Cổng của máy VPS:" ;read localport
     sed -i "/^$localport>.*/d" $conf
     echo "done!"
 }
@@ -264,7 +264,7 @@ do
     arr2=(`echo $cell|tr ":" " "|tr ">" " "`)  #arr2=16 REJECT 0.0.0.0/0
     # 过滤非法的行
     [ "${arr2[2]}" != "" -a "${arr2[3]}" = "" ]&& testVars ${arr2[0]}  ${arr2[1]} ${arr2[2]}&&{
-        echo "转发规则： ${arr2[0]}>${arr2[1]}:${arr2[2]}"
+        echo "Quy tắc chuyển tiếp: ${arr2[0]}>${arr2[1]}:${arr2[2]}"
     }
 done
 }
@@ -272,7 +272,7 @@ done
 
 
 
-echo  -e "${red}你要做什么呢（请输入数字）？Ctrl+C 退出本脚本${black}"
+echo  -e "${red}Hãy chọn: (vui lòng nhập một số)? Ctrl + C thoát tập lệnh này${black}"
 select todo in 增加转发规则 删除转发规则 列出所有转发规则 查看当前iptables配置
 do
     case $todo in
@@ -302,7 +302,7 @@ do
         echo "###########################################################"
         ;;
     *)
-        echo "如果要退出，请按Ctrl+C"
+        echo "Để thoát, nhấn Ctrl + C"
         ;;
     esac
 done
