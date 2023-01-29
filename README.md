@@ -1,24 +1,24 @@
-# 利用iptables设置端口转发的shell脚本
+# Sử dụng iptables để thiết lập tập lệnh shell để chuyển tiếp cổng
 
-## 项目作用
+## Vai trò dự án
 
-1. 便捷地设置iptables流量转发规则
-2. 当域名解析的地址发生变化时，自动更新流量转发规则，不需要手动变更（适用于ddns域名）
+1. Đặt quy tắc chuyển tiếp lưu lượng truy cập iptables một cách thuận tiện
+2. Khi địa chỉ phân giải tên miền thay đổi, quy tắc chuyển tiếp lưu lượng được cập nhật tự động mà không cần thay đổi thủ công (áp dụng với tên miền ddns)
 
-## 用法
+## Cách sử dụng
 
 
 ```shell
-# 如果vps不能访问 raw.githubusercontent.com 推荐使用这个
+# Nếu vps không thể truy cập raw.githubusercontent.com, bạn nên sử dụng cái này
 wget --no-check-certificate -qO natcfg.sh https://www.arloor.com/sh/iptablesUtils/natcfg.sh && bash natcfg.sh
 ```
-或
+hoặc là
 
 ```
-wget --no-check-certificate -qO natcfg.sh https://raw.githubusercontent.com/arloor/iptablesUtils/master/natcfg.sh && bash natcfg.sh
+wget --no-check-certificate -qO natcfg.sh https://raw.githubusercontent.com/harryngne/iptablesUtils/master/natcfg.sh && bash natcfg.sh
 ```
 
-输出如下：
+Tập lệnh như sau:
 
 ```
 #############################################################
@@ -28,57 +28,54 @@ wget --no-check-certificate -qO natcfg.sh https://raw.githubusercontent.com/arlo
 # Github: https://github.com/arloor/iptablesUtils           #
 #############################################################
 
-你要做什么呢（请输入数字）？Ctrl+C 退出本脚本
-1) 增加转发规则          3) 列出所有转发规则
-2) 删除转发规则          4) 查看当前iptables配置
+Bạn sẽ làm gì (vui lòng nhập một số)? Ctrl + C thoát tập lệnh này
+1) Thêm quy tắc chuyển tiếp  3) Liệt kê tất cả các quy tắc chuyển tiếp
+2) Xóa quy tắc chuyển tiếp   4) Xem cấu hình iptables hiện tại
 #?
 ```
 
-此时按照需要，输入1-4中的任意数字，然后按照提示即可
+Lúc này tùy theo nhu cầu mà nhập 1 số bất kỳ từ 1-4 rồi làm theo hướng dẫn
 
-## 卸载
+## Gỡ cài đặt
 
 ```shell
 wget --no-check-certificate -qO uninstall.sh https://raw.githubusercontent.com/arloor/iptablesUtils/master/dnat-uninstall.sh && bash uninstall.sh
 ```
 
-## 查看日志
+## Xem log
 
 ```shell
 journalctl -exu dnat
 ```
 
-## 配置文件备份和导入导出
+## Sao lưu tệp cấu hình và nhập và xuất
 
-配置文件在
+Tệp cấu hình nằm trong
 
 ```shell
 /etc/dnat/conf
 ```
 
-## trojan转发
+## chuyển tiếp trojan
 
-总是有人说，不能转发trojan，这么说的人大部分是证书配置不对。最简单的解决方案是：客户端选择不验证证书。复杂一点是自己把证书和中转机的域名搭配好。
+Một số người luôn nói rằng trojan không thể được chuyển tiếp Hầu hết những người nói điều này nói rằng cấu hình chứng chỉ là sai. Giải pháp đơn giản nhất là: khách hàng chọn không xác thực chứng chỉ. Điều phức tạp hơn là khớp chứng chỉ với tên miền của máy quá cảnh.
 
-小白记住一句话就好：客户端不验证证书。
+HarryNG chỉ nhớ một câu: khách hàng không xác minh chứng chỉ.
 
 -----------------------------------------------------------------------------
 
-## 推荐新项目——使用nftables实现nat转发
+## Đề xuất dự án mới - sử dụng nftables để thực hiện chuyển tiếp tự nhiên
 
-iptables的后继者nftables已经在debain和centos最新的操作系统中作为生产工具提供，nftables提供了很多新的特性，解决了iptables很多痛点。
+Bản tiếp theo của iptables, nftables, đã được cung cấp như một công cụ sản xuất trong các hệ điều hành mới nhất của debain và centos. nftables cung cấp nhiều tính năng mới và giải quyết nhiều điểm khó khăn của iptables.
 
-因此创建了一个新的项目[/arloor/nftables-nat-rust](https://github.com/arloor/nftables-nat-rust)。该项目使用nftables作为nat转发实现，相比本项目具有如下优点：
+Vì vậy, một dự án mới [/arloor/nftables-nat-rust](https://github.com/arloor/nftables-nat-rust) đã được tạo. Dự án này sử dụng nftables làm triển khai chuyển tiếp tự nhiên, có những ưu điểm sau so với dự án này:
 
-1. 支持端口段转发
-2. 转发规则使用配置文件，可以进行备份以及导入
-3. 更加现代
+1. Hỗ trợ chuyển tiếp đoạn cổng
+2. Quy tắc chuyển tiếp sử dụng các tệp cấu hình, có thể được sao lưu và nhập
+3. Hiện đại hơn
 
-所以**强烈推荐**使用[/arloor/nftables-nat-rust](https://github.com/arloor/nftables-nat-rust)。不用担心，本项目依然可以正常稳定使用。
+Vì vậy, **rất khuyến khích** sử dụng [/arloor/nftables-nat-rust](https://github.com/arloor/nftables-nat-rust). Đừng lo lắng, dự án này vẫn có thể được sử dụng bình thường và ổn định.
 
-PS: 新旧两个项目并不兼容，切换到新项目时，请先卸载此项目
+PS: Dự án cũ và mới không tương thích, khi chuyển sang dự án mới, vui lòng gỡ cài đặt dự án này trước
 
-## 电报交流群
-
-[https://t.me/popstary](https://t.me/popstary)
 
