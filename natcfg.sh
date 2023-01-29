@@ -273,14 +273,14 @@ done
 
 
 echo  -e "${red}Hãy chọn: (vui lòng nhập một số)? Ctrl + C thoát tập lệnh này${black}"
-select todo in 增加转发规则 删除转发规则 列出所有转发规则 查看当前iptables配置
+select todo in Thêm quy tắc chuyển tiếp Xóa quy tắc chuyển tiếp Danh sách các quy tắc chuyển tiếp Xem cấu hình iptables hiện tại
 do
     case $todo in
-    增加转发规则)
+    Thêm quy tắc chuyển tiếp)
         addDnat
         #break
         ;;
-    删除转发规则)
+    Xóa quy tắc chuyển tiếp)
         rmDnat
         #break
         ;;
@@ -292,10 +292,10 @@ do
     #     rmSnat
     #     #break
     #     ;;
-    列出所有转发规则)
+    Danh sách các quy tắc chuyển tiếp)
         lsDnat
         ;;
-    查看当前iptables配置)
+    Xem cấu hình iptables hiện tại)
         echo "###########################################################"
         iptables -L PREROUTING -n -t nat --line-number
         iptables -L POSTROUTING -n -t nat --line-number
